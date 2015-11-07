@@ -7,9 +7,17 @@ __date__ = "$Nov 7, 2015 6:23:50 AM$"
 
 from tkinter import *
 from tkinter.ttk import Frame, Button, Style
-import os
+import subprocess
 
 user = "frankcash"
+
+def find_between( s, first, last ):
+    try:
+        start = s.index( first ) + len( first )
+        end = s.index( last, start )
+        return s[start:end]
+    except ValueError:
+        return ""
 
 def clear_text(x):
     x.e.delete(1.0, END)
@@ -22,8 +30,12 @@ def send_text(x):
     string_to_encrypt = x.e.get("1.0",END)
     print(string_to_encrypt)
     string_together = "keybase encrypt -m \"" +string_to_encrypt + "\" " + user
-    finish = os.popen(string_together).read()
-    print(finish)
+    status = subprocess.check_output(string_together, shell = True)
+    #print(status)
+    status = status.decode('utf-8')
+    justPGP = find_between(status, "-----BEGIN PGP MESSAGE-----", "-----END PGP MESSAGE-----")
+    justPGP = "-----BEGIN PGP MESSAGE-----" + justPGP + "-----END PGP MESSAGE-----"
+    print (justPGP)
 
 def change_user(x):
     top = x.top = Toplevel(x)
