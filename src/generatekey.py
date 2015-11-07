@@ -3,55 +3,64 @@
 # and open the template in the editor.
 
 __author__ = "arelin"
-__date__ = "$Nov 7, 2015 6:05:27 AM$"
+__date__ = "$Nov 7, 2015 6:23:50 AM$"
 
-from tkinter import Tk, RIGHT, BOTH, RAISED, Text, END, Toplevel, Label, Entry
+from tkinter import *
 from tkinter.ttk import Frame, Button, Style
 import os
 
+user = "frankcash"
 
+def clear_text(x):
+    x.e.delete(1.0, END)
 
+def exitC(x):
+    x.top.destroy()
 
-            
-def initUI(self):
-     
-    self.parent.title("Send Message")
-    self.style = Style()
-    self.style.theme_use("default")
-    self.e = Text(self)
-    self.e.pack(expand = 1, fill= BOTH)
+def send_text(x):
+    print(user)
+    string_to_encrypt = x.e.get("1.0",END)
+    print(string_to_encrypt)
+    string_together = "keybase encrypt -m \"" +string_to_encrypt + "\" " + user
+    finish = os.popen(string_together).read()
+    print(finish)
+
+def change_user(x):
+    top = x.top = Toplevel(x)
+    top.wm_title("Change User")
+    Label(top, text="Keybase Username").pack()
+    x.g = Entry(top)
+    x.g.pack(padx=5)
+    b = Button(top, text="OK", command= lambda: user_reg(x.g.get(), x))
+    b.pack(pady=5)
+    c = Button(top, text="Cancel", command=lambda: exitC(x))
+    c.pack(pady=5)
+ 
+def user_reg(given, x):
+    global user 
+    user = given
+    x.top.destroy()
+    
+def exitC(x):
+    x.top.destroy()
+
+master = Tk()
+
+master.title("Send Message")
+master.style = Style()
+master.style.theme_use("default")
+master.e = Text(master)
+master.e.pack(expand = 1, fill= BOTH)
         #frame = Frame(self, relief=RAISED, borderwidth=1)
         #frame.pack(fill=BOTH, expand=1)
         
-    self.pack(fill=BOTH, expand=1)
-        
-    createButton = Button(self, text="New User", command=self.create_key)
-    createButton.pack(side=RIGHT, padx=5, pady=5)
-    closeButton = Button(self, text="Clear", command=self.clear_text)
-    closeButton.pack(side=RIGHT, padx=5, pady=5)
-    okButton = Button(self, text="Send", command=self.send_text)
-    okButton.pack(side=RIGHT)
-    
-        
-        
-        
-def clear_text(self):
-    self.e.delete(1.0, END)
+#master.pack(fill=BOTH, expand=1)
 
-def send_text(self):
-    string_to_encrypt = self.e.get("1.0",END)
-        
+clearButton = Button(master, text="Clear", command= lambda: clear_text(master))
+clearButton.pack(side=RIGHT, padx=5, pady=5)
+okButton = Button(master, text="Send", command= lambda: send_text(master))
+okButton.pack(side=RIGHT, padx=5, pady=5)
+changeUser = Button(master, text="Change User", command= lambda: change_user(master))
+changeUser.pack(side=RIGHT, padx=5, pady=5)
 
-def exitC(self):
-    self.top.destroy()
-
-def main():
-  
-    root = Tk()
-    root.geometry("800x600+300+300")
-    app = SDR(root)
-    root.mainloop()  
-
-
-if __name__ == '__main__':
-    main()  
+mainloop()
