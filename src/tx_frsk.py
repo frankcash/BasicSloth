@@ -2,7 +2,7 @@
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: TX FRSK
-# Generated: Sun Nov  8 07:10:53 2015
+# Generated: Sun Nov  8 08:12:36 2015
 ##################################################
 
 from gnuradio import blocks
@@ -49,14 +49,18 @@ class tx_frsk(gr.top_block):
           verbose=True,
           log=True,
           )
+        self.digital_map_bb_0 = digital.map_bb((0,1,2,3))
+        self.digital_diff_encoder_bb_0 = digital.diff_encoder_bb(4)
         self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vcc((0.5, ))
-        self.blocks_file_source_0 = blocks.file_source(gr.sizeof_char*1, "out.dat", True)
+        self.blocks_file_source_0 = blocks.file_source(gr.sizeof_char*1, "/Users/majora/Code/BasicSloth/out.dat", True)
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.blocks_file_source_0, 0), (self.digital_psk_mod_0, 0))    
+        self.connect((self.blocks_file_source_0, 0), (self.digital_map_bb_0, 0))    
         self.connect((self.blocks_multiply_const_vxx_0, 0), (self.osmosdr_sink_0, 0))    
+        self.connect((self.digital_diff_encoder_bb_0, 0), (self.digital_psk_mod_0, 0))    
+        self.connect((self.digital_map_bb_0, 0), (self.digital_diff_encoder_bb_0, 0))    
         self.connect((self.digital_psk_mod_0, 0), (self.blocks_multiply_const_vxx_0, 0))    
 
 
