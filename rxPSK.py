@@ -28,6 +28,7 @@ import sys
 import time
 
 
+
 class rxPSK(gr.top_block, Qt.QWidget):
 
     def __init__(self):
@@ -63,7 +64,7 @@ class rxPSK(gr.top_block, Qt.QWidget):
         ##################################################
         self.osmosdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + "" )
         self.osmosdr_source_0.set_sample_rate(samp_rate)
-        self.osmosdr_source_0.set_center_freq(100e6, 0)
+        self.osmosdr_source_0.set_center_freq(1250e6, 0)
         self.osmosdr_source_0.set_freq_corr(0, 0)
         self.osmosdr_source_0.set_dc_offset_mode(0, 0)
         self.osmosdr_source_0.set_iq_balance_mode(0, 0)
@@ -73,7 +74,7 @@ class rxPSK(gr.top_block, Qt.QWidget):
         self.osmosdr_source_0.set_bb_gain(20, 0)
         self.osmosdr_source_0.set_antenna("", 0)
         self.osmosdr_source_0.set_bandwidth(0, 0)
-          
+
         self.digital_psk_demod_0 = digital.psk.psk_demod(
           constellation_points=8,
           differential=True,
@@ -91,8 +92,8 @@ class rxPSK(gr.top_block, Qt.QWidget):
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.digital_psk_demod_0, 0), (self.blocks_file_sink_0, 0))    
-        self.connect((self.osmosdr_source_0, 0), (self.digital_psk_demod_0, 0))    
+        self.connect((self.digital_psk_demod_0, 0), (self.blocks_file_sink_0, 0))
+        self.connect((self.osmosdr_source_0, 0), (self.digital_psk_demod_0, 0))
 
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "rxPSK")
