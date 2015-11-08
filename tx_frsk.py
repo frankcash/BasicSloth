@@ -2,18 +2,8 @@
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: TX FRSK
-# Generated: Sat Nov  7 13:39:13 2015
+# Generated: Sun Nov  8 06:36:28 2015
 ##################################################
-
-if __name__ == '__main__':
-    import ctypes
-    import sys
-    if sys.platform.startswith('linux'):
-        try:
-            x11 = ctypes.cdll.LoadLibrary('libX11.so')
-            x11.XInitThreads()
-        except:
-            print "Warning: failed to XInitThreads()"
 
 from gnuradio import blocks
 from gnuradio import digital
@@ -21,17 +11,14 @@ from gnuradio import eng_notation
 from gnuradio import gr
 from gnuradio.eng_option import eng_option
 from gnuradio.filter import firdes
-from grc_gnuradio import wxgui as grc_wxgui
 from optparse import OptionParser
 import osmosdr
-import time
-import wx
 
 
-class tx_frsk(grc_wxgui.top_block_gui):
+class tx_frsk(gr.top_block):
 
     def __init__(self):
-        grc_wxgui.top_block_gui.__init__(self, title="TX FRSK")
+        gr.top_block.__init__(self, "TX FRSK")
 
         ##################################################
         # Variables
@@ -43,7 +30,7 @@ class tx_frsk(grc_wxgui.top_block_gui):
         ##################################################
         self.osmosdr_sink_0 = osmosdr.sink( args="numchan=" + str(1) + " " + "" )
         self.osmosdr_sink_0.set_sample_rate(samp_rate)
-        self.osmosdr_sink_0.set_center_freq(500e6, 0)
+        self.osmosdr_sink_0.set_center_freq(440e6, 0)
         self.osmosdr_sink_0.set_freq_corr(0, 0)
         self.osmosdr_sink_0.set_gain(10, 0)
         self.osmosdr_sink_0.set_if_gain(20, 0)
@@ -60,7 +47,7 @@ class tx_frsk(grc_wxgui.top_block_gui):
           verbose=False,
           log=False,
           )
-        self.blocks_file_source_0 = blocks.file_source(gr.sizeof_char*1, "/Users/majora/Code/BasicSloth/out.dat", True)
+        self.blocks_file_source_0 = blocks.file_source(gr.sizeof_char*1, "info.dat", False)
 
         ##################################################
         # Connections
@@ -81,5 +68,10 @@ if __name__ == '__main__':
     parser = OptionParser(option_class=eng_option, usage="%prog: [options]")
     (options, args) = parser.parse_args()
     tb = tx_frsk()
-    tb.Start(True)
-    tb.Wait()
+    tb.start()
+    try:
+        raw_input('Press Enter to quit: ')
+    except EOFError:
+        pass
+    tb.stop()
+    tb.wait()
