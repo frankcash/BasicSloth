@@ -2,7 +2,7 @@
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: rx-PSK
-# Generated: Sun Nov  8 01:42:16 2015
+# Generated: Sun Nov  8 02:42:38 2015
 ##################################################
 
 if __name__ == '__main__':
@@ -15,44 +15,25 @@ if __name__ == '__main__':
         except:
             print "Warning: failed to XInitThreads()"
 
-from PyQt4 import Qt
 from gnuradio import blocks
 from gnuradio import digital
 from gnuradio import eng_notation
 from gnuradio import gr
+from gnuradio import wxgui
 from gnuradio.eng_option import eng_option
 from gnuradio.filter import firdes
+from gnuradio.wxgui import constsink_gl
+from grc_gnuradio import wxgui as grc_wxgui
 from optparse import OptionParser
 import osmosdr
-import sys
 import time
+import wx
 
 
-
-class rxPSK(gr.top_block, Qt.QWidget):
+class rxPSK(grc_wxgui.top_block_gui):
 
     def __init__(self):
-        gr.top_block.__init__(self, "rx-PSK")
-        Qt.QWidget.__init__(self)
-        self.setWindowTitle("rx-PSK")
-        try:
-             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
-        except:
-             pass
-        self.top_scroll_layout = Qt.QVBoxLayout()
-        self.setLayout(self.top_scroll_layout)
-        self.top_scroll = Qt.QScrollArea()
-        self.top_scroll.setFrameStyle(Qt.QFrame.NoFrame)
-        self.top_scroll_layout.addWidget(self.top_scroll)
-        self.top_scroll.setWidgetResizable(True)
-        self.top_widget = Qt.QWidget()
-        self.top_scroll.setWidget(self.top_widget)
-        self.top_layout = Qt.QVBoxLayout(self.top_widget)
-        self.top_grid_layout = Qt.QGridLayout()
-        self.top_layout.addLayout(self.top_grid_layout)
-
-        self.settings = Qt.QSettings("GNU Radio", "rxPSK")
-        self.restoreGeometry(self.settings.value("geometry").toByteArray())
+        grc_wxgui.top_block_gui.__init__(self, title="rx-PSK")
 
         ##################################################
         # Variables
@@ -62,9 +43,25 @@ class rxPSK(gr.top_block, Qt.QWidget):
         ##################################################
         # Blocks
         ##################################################
+        self.wxgui_constellationsink2_0 = constsink_gl.const_sink_c(
+        	self.GetWin(),
+        	title="Constellation Plot",
+        	sample_rate=samp_rate,
+        	frame_rate=5,
+        	const_size=2048,
+        	M=4,
+        	theta=0,
+        	loop_bw=6.28/100.0,
+        	fmax=0.06,
+        	mu=0.5,
+        	gain_mu=0.005,
+        	symbol_rate=samp_rate/4.,
+        	omega_limit=0.005,
+        )
+        self.Add(self.wxgui_constellationsink2_0.win)
         self.osmosdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + "" )
         self.osmosdr_source_0.set_sample_rate(samp_rate)
-        self.osmosdr_source_0.set_center_freq(1250e6, 0)
+        self.osmosdr_source_0.set_center_freq(415e6, 0)
         self.osmosdr_source_0.set_freq_corr(0, 0)
         self.osmosdr_source_0.set_dc_offset_mode(0, 0)
         self.osmosdr_source_0.set_iq_balance_mode(0, 0)
@@ -74,7 +71,7 @@ class rxPSK(gr.top_block, Qt.QWidget):
         self.osmosdr_source_0.set_bb_gain(20, 0)
         self.osmosdr_source_0.set_antenna("", 0)
         self.osmosdr_source_0.set_bandwidth(0, 0)
-
+          
         self.digital_psk_demod_0 = digital.psk.psk_demod(
           constellation_points=8,
           differential=True,
@@ -92,13 +89,10 @@ class rxPSK(gr.top_block, Qt.QWidget):
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.digital_psk_demod_0, 0), (self.blocks_file_sink_0, 0))
-        self.connect((self.osmosdr_source_0, 0), (self.digital_psk_demod_0, 0))
+        self.connect((self.digital_psk_demod_0, 0), (self.blocks_file_sink_0, 0))    
+        self.connect((self.osmosdr_source_0, 0), (self.digital_psk_demod_0, 0))    
+        self.connect((self.osmosdr_source_0, 0), (self.wxgui_constellationsink2_0, 0))    
 
-    def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "rxPSK")
-        self.settings.setValue("geometry", self.saveGeometry())
-        event.accept()
 
     def get_samp_rate(self):
         return self.samp_rate
@@ -106,22 +100,12 @@ class rxPSK(gr.top_block, Qt.QWidget):
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
         self.osmosdr_source_0.set_sample_rate(self.samp_rate)
+        self.wxgui_constellationsink2_0.set_sample_rate(self.samp_rate)
 
 
 if __name__ == '__main__':
     parser = OptionParser(option_class=eng_option, usage="%prog: [options]")
     (options, args) = parser.parse_args()
-    from distutils.version import StrictVersion
-    if StrictVersion(Qt.qVersion()) >= StrictVersion("4.5.0"):
-        Qt.QApplication.setGraphicsSystem(gr.prefs().get_string('qtgui','style','raster'))
-    qapp = Qt.QApplication(sys.argv)
     tb = rxPSK()
-    tb.start()
-    tb.show()
-
-    def quitting():
-        tb.stop()
-        tb.wait()
-    qapp.connect(qapp, Qt.SIGNAL("aboutToQuit()"), quitting)
-    qapp.exec_()
-    tb = None  # to clean up Qt widgets
+    tb.Start(True)
+    tb.Wait()
