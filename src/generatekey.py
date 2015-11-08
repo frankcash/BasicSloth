@@ -44,7 +44,8 @@ def send_text(x):
     justPGP = find_between(status, "-----BEGIN PGP MESSAGE-----", "-----END PGP MESSAGE-----")
     justPGP = "-----BEGIN PGP MESSAGE-----" + justPGP + "-----END PGP MESSAGE-----"
     justPGP = ' '.join((format(ord(x), 'b') for x in justPGP))
-    f=open("info.dat",'w')
+    f=open("out.dat",'w')
+    print(justPGP)
     f.write(justPGP)
     f.close();
     python2_env = {"PYTHONPATH":"/lib/python2.7"}
