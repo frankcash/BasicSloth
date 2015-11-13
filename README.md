@@ -1,5 +1,8 @@
 # BasicSloth
 
+![Sloth](http://media.giphy.com/media/s4zt0MoO4BJyU/giphy.gif)
+
+
 BasicSloth came with the recognition that there needs to be an effect ground communication method for people in unstable situations. BasicSloth attempts to tackle this issue in a few ways including:
 - Using technology which allows for simple PGP encryption and decryption. This allows messages to only be unlocked by those intended.
 - Using cheap radio systems that cost thousands of dollars less than "safe" military methods, which may have more vulnerabilities than our system.
@@ -19,6 +22,6 @@ We give a special thanks to the Nuance team for their assistance with speech to 
 
 # Resources
 [From Baseband to bitstream](https://cansecwest.com/slides/2015/From_Baseband_to_bitstream_Andy_Davis.pdf)
+
 [US Frequency Allocations](http://www.ntia.doc.gov/files/ntia/publications/2003-allochrt.pdf)
 
-![Sloth](http://media.giphy.com/media/s4zt0MoO4BJyU/giphy.gif)
